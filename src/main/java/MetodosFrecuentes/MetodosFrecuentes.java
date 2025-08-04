@@ -47,6 +47,15 @@ public class MetodosFrecuentes {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+    
+    public static boolean mostrarConfirmacion(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        
+        return alert.showAndWait().orElse(null) == alert.getButtonTypes().get(0);
+    }
 
     public static void mostrarVentana(String rutaFXML, String titulo) {
         try {

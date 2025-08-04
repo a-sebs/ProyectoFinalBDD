@@ -8,7 +8,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        MetodosFrecuentes.mostrarVentana("/views/Login-view.fxml", "Login - Base de Datos Distribuidas");
+        primaryStage.setTitle("Login - Base de Datos Distribuidas");
+        MetodosFrecuentes.cambiarVentana(primaryStage, "/views/Login-view.fxml");
+        primaryStage.show();
     }
 
     public static void main(String[] args){

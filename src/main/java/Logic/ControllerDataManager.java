@@ -11,6 +11,7 @@ public class ControllerDataManager {
     private String selectedVistaName;
     private String operacion; // "INSERT", "UPDATE", "DELETE"
     private ObservableList<String> datosOriginales; // Para UPDATE/DELETE
+    private String origenContexto; // "MASTER", "REMOTO" - para saber a dónde regresar
     
     private ControllerDataManager() {}
     
@@ -53,10 +54,19 @@ public class ControllerDataManager {
         return datosOriginales;
     }
     
+    public void setOrigenContexto(String origenContexto) {
+        this.origenContexto = origenContexto;
+    }
+    
+    public String getOrigenContexto() {
+        return origenContexto;
+    }
+    
     public void clearData() {
         selectedTableName = null;
         selectedVistaName = null;
         operacion = null;
         datosOriginales = null;
+        origenContexto = null;
     }
 }

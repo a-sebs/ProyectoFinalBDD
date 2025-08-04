@@ -278,11 +278,8 @@ public class UpdateController implements Initializable {
         
         if (filasAfectadas > 0) {
             MetodosFrecuentes.mostrarAlerta("Éxito", "Registro insertado correctamente");
-            // Mantener la tabla seleccionada para volver a Vista-view
-            String currentTable = ControllerDataManager.getInstance().getSelectedTableName();
-            ControllerDataManager.getInstance().clearData();
-            ControllerDataManager.getInstance().setSelectedTableName(currentTable);
-            MetodosFrecuentes.cambiarVentana((Stage) btnGuardar.getScene().getWindow(), "/views/Vista-view.fxml");
+            // Regresar a la vista correcta
+            regresarAVistaOrigen();
         } else {
             MetodosFrecuentes.mostrarAlertaAdvertencia("Advertencia", "No se insertó ningún registro");
         }
@@ -363,11 +360,8 @@ public class UpdateController implements Initializable {
         
         if (filasAfectadas > 0) {
             MetodosFrecuentes.mostrarAlerta("Éxito", "Registro actualizado correctamente");
-            // Mantener la tabla seleccionada para volver a Vista-view
-            String currentTable = ControllerDataManager.getInstance().getSelectedTableName();
-            ControllerDataManager.getInstance().clearData();
-            ControllerDataManager.getInstance().setSelectedTableName(currentTable);
-            MetodosFrecuentes.cambiarVentana((Stage) btnGuardar.getScene().getWindow(), "/views/Vista-view.fxml");
+            // Regresar a la vista correcta
+            regresarAVistaOrigen();
         } else {
             MetodosFrecuentes.mostrarAlertaAdvertencia("Advertencia", "No se actualizó ningún registro");
         }
@@ -384,12 +378,42 @@ public class UpdateController implements Initializable {
     
     @FXML
     private void handleCancelar() {
-        // Mantener el nombre de la tabla pero limpiar los datos de operación
-        // para que Vista-view pueda seguir mostrando los datos de la tabla
+        // Obtener el contexto de origen para saber a dónde regresar
+        String origen = ControllerDataManager.getInstance().getOrigenContexto();
         String currentTable = ControllerDataManager.getInstance().getSelectedTableName();
+        
+        // Limpiar datos de operación pero mantener información de la tabla
         ControllerDataManager.getInstance().clearData();
         ControllerDataManager.getInstance().setSelectedTableName(currentTable);
         
-        MetodosFrecuentes.cambiarVentana((Stage) btnCancelar.getScene().getWindow(), "/views/Vista-view.fxml");
+        // Regresar a la vista correcta según el origen
+        if ("MASTER".equals(origen)) {
+            // Volver al modo Master (Table-view)
+            MetodosFrecuentes.cambiarVentana((Stage) btnCancelar.getScene().getWindow(), "/views/Table-view.fxml");
+        } else {
+            // Volver al modo Remoto (Vista-view) - comportamiento por defecto
+            MetodosFrecuentes.cambiarVentana((Stage) btnCancelar.getScene().getWindow(), "/views/Vista-view.fxml");
+        }
+    }
+    
+    /**
+     * Método auxiliar para regresar a la vista de origen correcta
+     */
+    private void regresarAVistaOrigen() {
+        String origen = ControllerDataManager.getInstance().getOrigenContexto();
+        String currentTable = ControllerDataManager.getInstance().getSelectedTableName();
+        
+        // Limpiar datos de operación pero mantener información de la tabla
+        ControllerDataManager.getInstance().clearData();
+        ControllerDataManager.getInstance().setSelectedTableName(currentTable);
+        
+        // Regresar a la vista correcta según el origen
+        if ("MASTER".equals(origen)) {
+            // Volver al modo Master (Table-view)
+            MetodosFrecuentes.cambiarVentana((Stage) btnGuardar.getScene().getWindow(), "/views/Table-view.fxml");
+        } else {
+            // Volver al modo Remoto (Vista-view) - comportamiento por defecto
+            MetodosFrecuentes.cambiarVentana((Stage) btnGuardar.getScene().getWindow(), "/views/Vista-view.fxml");
+        }
     }
 }

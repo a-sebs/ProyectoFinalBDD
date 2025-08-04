@@ -331,6 +331,7 @@ public class VistaController implements Initializable {
         ControllerDataManager.getInstance().setOperacion("UPDATE");
         ControllerDataManager.getInstance().setDatosOriginales(filaSeleccionada);
         ControllerDataManager.getInstance().setSelectedVistaName(null);
+        ControllerDataManager.getInstance().setOrigenContexto("REMOTO"); // Marcar origen como REMOTO
         
         // Cambiar a la vista Update-view
         MetodosFrecuentes.cambiarVentana((Stage) btnModificarFila.getScene().getWindow(), "/views/Update-view.fxml");
@@ -343,6 +344,7 @@ public class VistaController implements Initializable {
         ControllerDataManager.getInstance().setOperacion("INSERT");
         ControllerDataManager.getInstance().setDatosOriginales(null);
         ControllerDataManager.getInstance().setSelectedVistaName(null);
+        ControllerDataManager.getInstance().setOrigenContexto("REMOTO"); // Marcar origen como REMOTO
         
         // Cambiar a la vista Update-view
         MetodosFrecuentes.cambiarVentana((Stage) btnInsertarFila.getScene().getWindow(), "/views/Update-view.fxml");

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.UpdateController">
+   <children>
+      <VBox layoutX="300.0" layoutY="15.0" prefHeight="40.0" prefWidth="200.0">
+         <children>
+            <Label fx:id="lblTitulo" alignment="CENTER" prefHeight="30.0" prefWidth="200.0" text="ACTUALIZAR REGISTRO">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+      
+      <Label fx:id="lblTablaName" layoutX="25.0" layoutY="65.0" text="Tabla:" />
+      
+      <ScrollPane layoutX="25.0" layoutY="90.0" prefHeight="400.0" prefWidth="750.0">
+         <content>
+            <VBox fx:id="vboxFormulario" prefHeight="380.0" prefWidth="730.0" spacing="15.0" />
+         </content>
+      </ScrollPane>
+      
+      <Button fx:id="btnGuardar" layoutX="590.0" layoutY="510.0" mnemonicParsing="false" onAction="#handleGuardar" prefHeight="30.0" prefWidth="80.0" text="Guardar" />
+      <Button fx:id="btnCancelar" layoutX="680.0" layoutY="510.0" mnemonicParsing="false" onAction="#handleCancelar" prefHeight="30.0" prefWidth="80.0" text="Cancelar" />
+      <Button fx:id="btnLimpiar" layoutX="500.0" layoutY="510.0" mnemonicParsing="false" onAction="#handleLimpiar" prefHeight="30.0" prefWidth="80.0" text="Limpiar" />
+   </children>
+</AnchorPane>

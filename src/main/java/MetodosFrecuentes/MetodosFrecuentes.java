@@ -24,8 +24,15 @@ public class MetodosFrecuentes {
         }
     }
 
-
     public static void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+    
+    public static void mostrarAlertaError(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
@@ -33,6 +40,13 @@ public class MetodosFrecuentes {
         alert.showAndWait();
     }
     
+    public static void mostrarAlertaAdvertencia(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
 
     public static void mostrarVentana(String rutaFXML, String titulo) {
         try {
@@ -48,5 +62,4 @@ public class MetodosFrecuentes {
             e.printStackTrace();
         }
     }
-
 }

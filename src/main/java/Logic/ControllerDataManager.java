@@ -1,5 +1,7 @@
 package Logic;
 
+import javafx.collections.ObservableList;
+
 /**
  * Clase para compartir datos entre controladores
  */
@@ -7,6 +9,8 @@ public class ControllerDataManager {
     private static ControllerDataManager instance;
     private String selectedTableName;
     private String selectedVistaName;
+    private String operacion; // "INSERT", "UPDATE", "DELETE"
+    private ObservableList<String> datosOriginales; // Para UPDATE/DELETE
     
     private ControllerDataManager() {}
     
@@ -33,8 +37,26 @@ public class ControllerDataManager {
         return selectedVistaName;
     }
     
+    public void setOperacion(String operacion) {
+        this.operacion = operacion;
+    }
+    
+    public String getOperacion() {
+        return operacion;
+    }
+    
+    public void setDatosOriginales(ObservableList<String> datosOriginales) {
+        this.datosOriginales = datosOriginales;
+    }
+    
+    public ObservableList<String> getDatosOriginales() {
+        return datosOriginales;
+    }
+    
     public void clearData() {
         selectedTableName = null;
         selectedVistaName = null;
+        operacion = null;
+        datosOriginales = null;
     }
 }

@@ -233,6 +233,8 @@ public class UpdateController implements Initializable {
                 realizarUpdate();
             }
         } catch (SQLException e) {
+            // Realizar rollback automático en caso de error
+            MetodosFrecuentes.realizarRollbackAutomatico();
             MetodosFrecuentes.mostrarAlertaError("Error en Base de Datos", 
                 "Error al " + (operacion.equals("INSERT") ? "insertar" : "actualizar") + " el registro:\n\n" + e.getMessage());
             e.printStackTrace();
@@ -316,6 +318,8 @@ public class UpdateController implements Initializable {
         pstmt.close();
         
         if (filasAfectadas > 0) {
+            // Realizar commit automático y refrescar vistas materializadas
+            MetodosFrecuentes.realizarCommitYRefrescarVistas();
             MetodosFrecuentes.mostrarAlerta("Éxito", "Registro insertado correctamente");
             // Regresar a la vista correcta
             regresarAVistaOrigen();
@@ -470,6 +474,8 @@ public class UpdateController implements Initializable {
         pstmt.close();
         
         if (filasAfectadas > 0) {
+            // Realizar commit automático y refrescar vistas materializadas
+            MetodosFrecuentes.realizarCommitYRefrescarVistas();
             MetodosFrecuentes.mostrarAlerta("Éxito", "Registro actualizado correctamente");
             // Regresar a la vista correcta
             regresarAVistaOrigen();

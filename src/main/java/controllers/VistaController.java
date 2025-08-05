@@ -130,8 +130,8 @@ public class VistaController implements Initializable {
             while (rs.next() && rowCount < 500) { // Limitar a 500 filas para rendimiento
                 ObservableList<String> row = FXCollections.observableArrayList();
                 for (int i = 1; i <= columnCount; i++) {
-                    String value = rs.getString(i);
-                    row.add(value != null ? value : "NULL");
+                    String value = MetodosFrecuentes.getColumnValue(rs, i, metaData);
+                    row.add(value);
                 }
                 data.add(row);
                 rowCount++;
@@ -212,8 +212,8 @@ public class VistaController implements Initializable {
             while (rs.next() && count < 500) {
                 ObservableList<String> row = FXCollections.observableArrayList();
                 for (int i = 1; i <= columnCount; i++) {
-                    String value = rs.getString(i);
-                    row.add(value != null ? value : "NULL");
+                    String value = MetodosFrecuentes.getColumnValue(rs, i, metaData);
+                    row.add(value);
                 }
                 data.add(row);
                 count++;
@@ -304,6 +304,8 @@ public class VistaController implements Initializable {
             pstmt.close();
             
             if (filasAfectadas > 0) {
+                // Realizar commit automático y refrescar vistas materializadas
+                MetodosFrecuentes.realizarCommitYRefrescarVistas();
                 MetodosFrecuentes.mostrarAlerta("Éxito", "Fila eliminada correctamente");
                 loadContent(); // Recargar datos
             } else {
@@ -311,6 +313,8 @@ public class VistaController implements Initializable {
             }
             
         } catch (SQLException e) {
+            // Realizar rollback automático en caso de error
+            MetodosFrecuentes.realizarRollbackAutomatico();
             MetodosFrecuentes.mostrarAlertaError("Error en Base de Datos", 
                 "Error al eliminar la fila:\n\n" + e.getMessage());
             e.printStackTrace();

@@ -110,8 +110,8 @@ public class TableController implements Initializable {
             while (rs.next() && rowCount < 500) { // Limitar a 500 filas para rendimiento
                 ObservableList<String> row = FXCollections.observableArrayList();
                 for (int i = 1; i <= columnCount; i++) {
-                    String value = rs.getString(i);
-                    row.add(value != null ? value : "NULL");
+                    String value = MetodosFrecuentes.getColumnValue(rs, i, metaData);
+                    row.add(value);
                 }
                 data.add(row);
                 rowCount++;
@@ -188,8 +188,8 @@ public class TableController implements Initializable {
                 while (rs.next() && count < 200) {
                     ObservableList<String> row = FXCollections.observableArrayList();
                     for (int i = 1; i <= columnCount; i++) {
-                        String value = rs.getString(i);
-                        row.add(value != null ? value : "NULL");
+                        String value = MetodosFrecuentes.getColumnValue(rs, i, metaData);
+                        row.add(value);
                     }
                     data.add(row);
                     count++;
@@ -395,6 +395,8 @@ public class TableController implements Initializable {
             pstmt.close();
             
             if (filasAfectadas > 0) {
+                // Realizar commit automático y refrescar vistas materializadas
+                MetodosFrecuentes.realizarCommitYRefrescarVistas();
                 MetodosFrecuentes.mostrarAlerta("Éxito", "Fila eliminada correctamente");
                 loadTableContent(); // Recargar datos
             } else {
@@ -402,6 +404,8 @@ public class TableController implements Initializable {
             }
             
         } catch (SQLException e) {
+            // Realizar rollback automático en caso de error
+            MetodosFrecuentes.realizarRollbackAutomatico();
             MetodosFrecuentes.mostrarAlertaError("Error", "Error al eliminar la fila: " + e.getMessage());
             e.printStackTrace();
         }

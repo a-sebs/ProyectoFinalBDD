@@ -182,7 +182,15 @@ public class UpdateController implements Initializable {
             // TextField para el valor
             TextField txtCampo = new TextField();
             txtCampo.setPrefWidth(300);
-            txtCampo.setPromptText(columnType);
+            
+            // Configurar placeholder según el tipo de dato
+            if (isDateType(columnType)) {
+                txtCampo.setPromptText("Formato: DD/MM/YYYY (ej: 25/12/2024)");
+            } else if (isTimestampType(columnType)) {
+                txtCampo.setPromptText("Formato: DD/MM/YYYY HH:MM:SS (ej: 25/12/2024 14:30:00)");
+            } else {
+                txtCampo.setPromptText(columnType);
+            }
             
             // Si es UPDATE, cargar datos originales
             if ("UPDATE".equals(operacion) && datosOriginales != null && i < datosOriginales.size()) {
@@ -266,10 +274,41 @@ public class UpdateController implements Initializable {
         // Establecer parámetros
         for (int i = 0; i < valoresCampos.size(); i++) {
             String valor = valoresCampos.get(i);
+            String columnName = columnNames.get(i);
+            String columnType = columnTypes.get(i);
+            
             if (valor == null) {
-                pstmt.setNull(i + 1, Types.VARCHAR);
+                // Determinar el tipo correcto para NULL
+                if (isDateType(columnType)) {
+                    pstmt.setNull(i + 1, Types.DATE);
+                } else if (isTimestampType(columnType)) {
+                    pstmt.setNull(i + 1, Types.TIMESTAMP);
+                } else {
+                    pstmt.setNull(i + 1, Types.VARCHAR);
+                }
             } else {
-                pstmt.setString(i + 1, valor);
+                // Manejar diferentes tipos de datos
+                if (isDateType(columnType)) {
+                    try {
+                        // Intentar parsear como fecha
+                        java.sql.Date sqlDate = parseDate(valor);
+                        pstmt.setDate(i + 1, sqlDate);
+                    } catch (Exception e) {
+                        // Si falla el parsing, intentar con TO_DATE
+                        pstmt.setString(i + 1, "TO_DATE('" + valor + "', 'DD/MM/YYYY')");
+                    }
+                } else if (isTimestampType(columnType)) {
+                    try {
+                        // Intentar parsear como timestamp
+                        java.sql.Timestamp sqlTimestamp = parseTimestamp(valor);
+                        pstmt.setTimestamp(i + 1, sqlTimestamp);
+                    } catch (Exception e) {
+                        // Si falla el parsing, intentar con TO_TIMESTAMP
+                        pstmt.setString(i + 1, "TO_TIMESTAMP('" + valor + "', 'DD/MM/YYYY HH24:MI:SS')");
+                    }
+                } else {
+                    pstmt.setString(i + 1, valor);
+                }
             }
         }
         
@@ -340,19 +379,91 @@ public class UpdateController implements Initializable {
         
         // Establecer parámetros SET
         int paramIndex = 1;
-        for (String valor : valoresSet) {
-            if (valor == null) {
-                pstmt.setNull(paramIndex, Types.VARCHAR);
-            } else {
-                pstmt.setString(paramIndex, valor);
+        for (int i = 0; i < columnNames.size(); i++) {
+            String columnName = columnNames.get(i);
+            String columnType = columnTypes.get(i);
+            
+            if (!primaryKeyColumns.contains(columnName)) {
+                String valor = valoresSet.get(paramIndex - 1);
+                if (valor == null) {
+                    // Determinar el tipo correcto para NULL
+                    if (isDateType(columnType)) {
+                        pstmt.setNull(paramIndex, Types.DATE);
+                    } else if (isTimestampType(columnType)) {
+                        pstmt.setNull(paramIndex, Types.TIMESTAMP);
+                    } else {
+                        pstmt.setNull(paramIndex, Types.VARCHAR);
+                    }
+                } else {
+                    // Manejar diferentes tipos de datos
+                    if (isDateType(columnType)) {
+                        try {
+                            // Intentar parsear como fecha
+                            java.sql.Date sqlDate = parseDate(valor);
+                            pstmt.setDate(paramIndex, sqlDate);
+                        } catch (Exception e) {
+                            // Si falla el parsing, intentar con TO_DATE
+                            pstmt.setString(paramIndex, "TO_DATE('" + valor + "', 'DD/MM/YYYY')");
+                        }
+                    } else if (isTimestampType(columnType)) {
+                        try {
+                            // Intentar parsear como timestamp
+                            java.sql.Timestamp sqlTimestamp = parseTimestamp(valor);
+                            pstmt.setTimestamp(paramIndex, sqlTimestamp);
+                        } catch (Exception e) {
+                            // Si falla el parsing, intentar con TO_TIMESTAMP
+                            pstmt.setString(paramIndex, "TO_TIMESTAMP('" + valor + "', 'DD/MM/YYYY HH24:MI:SS')");
+                        }
+                    } else {
+                        pstmt.setString(paramIndex, valor);
+                    }
+                }
+                paramIndex++;
             }
-            paramIndex++;
         }
         
         // Establecer parámetros WHERE
-        for (String valor : valoresWhere) {
-            pstmt.setString(paramIndex, valor);
-            paramIndex++;
+        for (int i = 0; i < columnNames.size(); i++) {
+            String columnName = columnNames.get(i);
+            String columnType = columnTypes.get(i);
+            
+            if (primaryKeyColumns.contains(columnName)) {
+                String valor = valoresWhere.get(primaryKeyColumns.indexOf(columnName));
+                if (valor == null) {
+                    // Determinar el tipo correcto para NULL
+                    if (isDateType(columnType)) {
+                        pstmt.setNull(paramIndex, Types.DATE);
+                    } else if (isTimestampType(columnType)) {
+                        pstmt.setNull(paramIndex, Types.TIMESTAMP);
+                    } else {
+                        pstmt.setNull(paramIndex, Types.VARCHAR);
+                    }
+                } else {
+                    // Manejar diferentes tipos de datos
+                    if (isDateType(columnType)) {
+                        try {
+                            // Intentar parsear como fecha
+                            java.sql.Date sqlDate = parseDate(valor);
+                            pstmt.setDate(paramIndex, sqlDate);
+                        } catch (Exception e) {
+                            // Si falla el parsing, intentar con TO_DATE
+                            pstmt.setString(paramIndex, "TO_DATE('" + valor + "', 'DD/MM/YYYY')");
+                        }
+                    } else if (isTimestampType(columnType)) {
+                        try {
+                            // Intentar parsear como timestamp
+                            java.sql.Timestamp sqlTimestamp = parseTimestamp(valor);
+                            pstmt.setTimestamp(paramIndex, sqlTimestamp);
+                        } catch (Exception e) {
+                            // Si falla el parsing, intentar con TO_TIMESTAMP
+                            pstmt.setString(paramIndex, "TO_TIMESTAMP('" + valor + "', 'DD/MM/YYYY HH24:MI:SS')");
+                        }
+                    } else {
+                        pstmt.setString(paramIndex, valor);
+                    }
+                }
+                paramIndex++;
+            }
         }
         
         int filasAfectadas = pstmt.executeUpdate();
@@ -415,5 +526,75 @@ public class UpdateController implements Initializable {
             // Volver al modo Remoto (Vista-view) - comportamiento por defecto
             MetodosFrecuentes.cambiarVentana((Stage) btnGuardar.getScene().getWindow(), "/views/Vista-view.fxml");
         }
+    }
+    
+    /**
+     * Verifica si el tipo de columna es DATE
+     */
+    private boolean isDateType(String columnType) {
+        return columnType != null && columnType.toUpperCase().contains("DATE");
+    }
+    
+    /**
+     * Verifica si el tipo de columna es TIMESTAMP
+     */
+    private boolean isTimestampType(String columnType) {
+        return columnType != null && columnType.toUpperCase().contains("TIMESTAMP");
+    }
+    
+    /**
+     * Parsea una cadena de fecha a java.sql.Date
+     */
+    private java.sql.Date parseDate(String dateStr) throws Exception {
+        // Intentar diferentes formatos de fecha
+        String[] formats = {
+            "dd/MM/yyyy",
+            "dd-MM-yyyy", 
+            "yyyy-MM-dd",
+            "dd/MM/yy",
+            "dd-MM-yy",
+            "yyyy/MM/dd"
+        };
+        
+        for (String format : formats) {
+            try {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(format);
+                sdf.setLenient(false);
+                java.util.Date date = sdf.parse(dateStr);
+                return new java.sql.Date(date.getTime());
+            } catch (Exception e) {
+                // Continuar con el siguiente formato
+            }
+        }
+        
+        throw new Exception("No se pudo parsear la fecha: " + dateStr);
+    }
+    
+    /**
+     * Parsea una cadena de timestamp a java.sql.Timestamp
+     */
+    private java.sql.Timestamp parseTimestamp(String timestampStr) throws Exception {
+        // Intentar diferentes formatos de timestamp
+        String[] formats = {
+            "dd/MM/yyyy HH:mm:ss",
+            "dd-MM-yyyy HH:mm:ss",
+            "yyyy-MM-dd HH:mm:ss",
+            "dd/MM/yyyy HH:mm",
+            "dd-MM-yyyy HH:mm",
+            "yyyy-MM-dd HH:mm"
+        };
+        
+        for (String format : formats) {
+            try {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(format);
+                sdf.setLenient(false);
+                java.util.Date date = sdf.parse(timestampStr);
+                return new java.sql.Timestamp(date.getTime());
+            } catch (Exception e) {
+                // Continuar con el siguiente formato
+            }
+        }
+        
+        throw new Exception("No se pudo parsear el timestamp: " + timestampStr);
     }
 }
